@@ -5,7 +5,7 @@
 require_once 'includes/database.php';
 require_once 'includes/functions.php';
 
-echo "<h2>Recent Activity Logs (Last 10)</h2>";
+echo "<h2>Recent Activity Logs (Last 100)</h2>";
 echo "<style>table{border-collapse:collapse;width:100%} th,td{border:1px solid #ddd;padding:8px;text-align:left} th{background:#f2f2f2}</style>";
 
 try {
@@ -13,7 +13,7 @@ try {
         SELECT timestamp, level, message, details
         FROM activity_logs 
         ORDER BY timestamp DESC 
-        LIMIT 10
+        LIMIT 100
     ");
     $stmt->execute();
     $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);

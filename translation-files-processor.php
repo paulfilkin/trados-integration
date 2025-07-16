@@ -189,7 +189,7 @@ class TradosProjectManager {
             logActivity('info', 'Authenticating with Auth0', [
                 'auth0_domain' => $auth0Domain,
                 'client_id' => $this->clientId,
-                'audience' => 'https://api.sdl.com'
+                'audience' => 'https://api.sdl.com',
             ]);
             
             $response = $this->makeAuth0Call($tokenUrl, $postData);
@@ -369,13 +369,29 @@ class TradosProjectManager {
             // Add language directions to project data
             $projectData['languageDirections'] = $languageDirections;
 
-            // Add project template if provided AND if we got a valid template response
-            if ($this->projectTemplateId && $templateResponse && isset($templateResponse['id'])) {
-                $projectData['projectTemplate'] = [
-                    'id' => $this->projectTemplateId
+            // Add workflow from template if available
+            if ($templateResponse && isset($templateResponse['workflow']['id'])) {
+                $projectData['workflow'] = [
+                    'id' => $templateResponse['workflow']['id']
                 ];
-                logActivity('info', 'Including project template in project data', [
-                    'template_id' => $this->projectTemplateId
+                logActivity('info', 'Including workflow from template', [
+                    'workflow_id' => $templateResponse['workflow']['id'],
+                    'workflow_name' => $templateResponse['workflow']['name'] ?? 'unknown'
+                ]);
+            } else {
+                logActivity('warning', 'No workflow found in template', [
+                    'template_response' => $templateResponse
+                ]);
+            }
+
+            // Get template data but don't include template reference in project creation
+            if ($this->projectTemplateId && $templateResponse && isset($templateResponse['id'])) {
+                // We have template data - use location and language directions
+                // But DON'T include the projectTemplate reference
+                logActivity('info', 'Using template data without template reference to avoid API validation error', [
+                    'template_id' => $this->projectTemplateId,
+                    'location_from_template' => $locationId,
+                    'language_directions_from_template' => count($languageDirections)
                 ]);
             } else {
                 logActivity('warning', 'Not including project template - invalid template response', [

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trados Template Diagnostic</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #007acc;
+            padding-bottom: 10px;
+        }
+        
+        .input-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+        
+        button {
+            background: #007acc;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background: #005fa3;
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+        
+        .results {
+            margin-top: 20px;
+        }
+        
+        .result-section {
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+        
+        .result-header {
+            background: #f1f3f4;
+            padding: 12px 16px;
+            font-weight: bold;
+            border-bottom: 1px solid #ddd;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .result-content {
+            padding: 16px;
+            display: none;
+        }
+        
+        .result-content.expanded {
+            display: block;
+        }
+        
+        .success {
+            color: #28a745;
+        }
+        
+        .error {
+            color: #dc3545;
+        }
+        
+        .warning {
+            color: #ffc107;
+        }
+        
+        .info {
+            color: #007acc;
+        }
+        
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .analysis-section {
+            background: #e8f4fd;
+            border: 1px solid #bee5eb;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+        }
+        
+        .recommendation {
+            background: #d1ecf1;
+            border-left: 4px solid #007acc;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        
+        .issue {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        
+        .template-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .template-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .template-item:last-child {
+            border-bottom: none;
+        }
+        
+        .template-id {
+            font-family: monospace;
+            background: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        code {
+            background: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        
+        .expand-icon {
+            transition: transform 0.2s;
+        }
+        
+        .expanded .expand-icon {
+            transform: rotate(90deg);
+        }
+        
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ߔ Trados Template Diagnostic Tool</h1>
+        
+        <div class="input-section">
+            <label for="instanceId">Instance ID:</label>
+            <input type="text" id="instanceId" placeholder="e.g., trados_instance_1752578909_9945baa4" value="trados_instance_1752578909_9945baa4">
+            
+            <button onclick="runDiagnostic()" id="runBtn">Run Template Diagnostic</button>
+        </div>
+        
+        <div class="loading" id="loading">
+            <p>ߔ Running comprehensive diagnostic...</p>
+            <p>This may take 30-60 seconds as we test all API endpoints</p>
+        </div>
+        
+        <div class="results" id="results" style="display: none;"></div>
+    </div>
+
+    <script>
+        async function runDiagnostic() {
+            const instanceId = document.getElementById('instanceId').value.trim();
+            const runBtn = document.getElementById('runBtn');
+            const loading = document.getElementById('loading');
+            const results = document.getElementById('results');
+            
+            if (!instanceId) {
+                alert('Please enter an Instance ID');
+                return;
+            }
+            
+            runBtn.disabled = true;
+            loading.style.display = 'block';
+            results.style.display = 'none';
+            
+            try {
+                const response = await fetch('v1/template-diagnostic.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ instanceId: instanceId })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayResults(data.diagnostic_results);
+                } else {
+                    displayError(data.error || 'Unknown error occurred');
+                }
+                
+            } catch (error) {
+                displayError('Network error: ' + error.message);
+            } finally {
+                runBtn.disabled = false;
+                loading.style.display = 'none';
+                results.style.display = 'block';
+            }
+        }
+        
+        function displayResults(diagnosticResults) {
+            const results = document.getElementById('results');
+            let html = '';
+            
+            // Analysis section (most important)
+            if (diagnosticResults.analysis) {
+                html += createAnalysisSection(diagnosticResults.analysis);
+            }
+            
+            // Credentials test
+            if (diagnosticResults.credentials) {
+                html += createSection('Credentials & Authentication', diagnosticResults.credentials, getCredentialsStatus(diagnosticResults.credentials));
+            }
+            
+            // Available templates
+            if (diagnosticResults.available_templates) {
+                html += createTemplatesSection(diagnosticResults.available_templates);
+            }
+            
+            // Specific template test
+            if (diagnosticResults.specific_template_test) {
+                html += createSection('Target Template Access Test', diagnosticResults.specific_template_test, 
+                    diagnosticResults.specific_template_test.template_accessible ? 'success' : 'error');
+            }
+            
+            // Available locations
+            if (diagnosticResults.available_locations) {
+                html += createLocationsSection(diagnosticResults.available_locations);
+            }
+            
+            // Test project creation
+            if (diagnosticResults.test_project_creation) {
+                html += createSection('Project Creation Test (Without Template)', diagnosticResults.test_project_creation,
+                    diagnosticResults.test_project_creation.success ? 'success' : 'error');
+            }
+            
+            results.innerHTML = html;
+        }
+        
+        function createAnalysisSection(analysis) {
+            let html = '<div class="analysis-section">';
+            html += '<h2>ߓ Diagnostic Analysis & Recommendations</h2>';
+            
+            if (analysis.summary && analysis.summary.length > 0) {
+                html += '<h3>✅ Summary</h3>';
+                analysis.summary.forEach(item => {
+                    html += `<div class="recommendation">✓ ${item}</div>`;
+                });
+            }
+            
+            if (analysis.issues_found && analysis.issues_found.length > 0) {
+                html += '<h3>❌ Issues Found</h3>';
+                analysis.issues_found.forEach(item => {
+                    html += `<div class="issue">⚠️ ${item}</div>`;
+                });
+            }
+            
+            if (analysis.recommendations && analysis.recommendations.length > 0) {
+                html += '<h3>ߒ Recommendations</h3>';
+                analysis.recommendations.forEach(item => {
+                    html += `<div class="recommendation">ߒ ${item}</div>`;
+                });
+            }
+            
+            html += '</div>';
+            return html;
+        }
+        
+        function createTemplatesSection(templates) {
+            const status = templates.target_template_found ? 'success' : 'error';
+            let html = `<div class="result-section">
+                <div class="result-header" onclick="toggleSection(this)">
+                    <span>Available Templates (${templates.total_templates} found)</span>
+                    <div>
+                        <span class="status-badge status-${status}">
+                            ${templates.target_template_found ? 'Target Found' : 'Target Missing'}
+                        </span>
+                        <span class="expand-icon">▶</span>
+                    </div>
+                </div>
+                <div class="result-content">`;
+            
+            if (templates.templates && templates.templates.length > 0) {
+                html += '<div class="template-list">';
+                templates.templates.forEach(template => {
+                    const isTarget = template.is_target_template;
+                    html += `<div class="template-item" style="${isTarget ? 'background: #e8f5e8; border-left: 4px solid #28a745;' : ''}">
+                        <div><strong>${template.name}</strong> ${isTarget ? 'ߎ <strong>(TARGET TEMPLATE)</strong>' : ''}</div>
+                        <div>ID: <span class="template-id">${template.id}</span></div>
+                        <div>Location: ${template.location_name || 'Unknown'} (${template.location_id || 'No location'})</div>
+                        <div>Language Directions: ${template.language_directions_count}</div>
+                        ${template.description ? `<div>Description: ${template.description}</div>` : ''}
+                    </div>`;
+                });
+                html += '</div>';
+            } else {
+                html += '<p class="error">No templates available to this instance</p>';
+            }
+            
+            html += '</div></div>';
+            return html;
+        }
+        
+        function createLocationsSection(locations) {
+            const status = locations.total_locations > 0 ? 'success' : 'error';
+            let html = `<div class="result-section">
+                <div class="result-header" onclick="toggleSection(this)">
+                    <span>Available Locations (${locations.total_locations} found)</span>
+                    <div>
+                        <span class="status-badge status-${status}">
+                            ${locations.total_locations > 0 ? 'Locations Available' : 'No Locations'}
+                        </span>
+                        <span class="expand-icon">▶</span>
+                    </div>
+                </div>
+                <div class="result-content">`;
+            
+            if (locations.locations && locations.locations.length > 0) {
+                locations.locations.forEach(location => {
+                    const isTemplate = location.is_template_location;
+                    const isTarget = location.is_your_target_location;
+                    let style = '';
+                    let label = '';
+                    
+                    if (isTemplate) {
+                        style = 'background: #fff3cd; border-left: 4px solid #ffc107;';
+                        label = 'ߓ (Template Location)';
+                    }
+                    if (isTarget) {
+                        style = 'background: #e8f4fd; border-left: 4px solid #007acc;';
+                        label = 'ߎ (Your Target Location)';
+                    }
+                    
+                    html += `<div style="padding: 10px; margin: 5px 0; ${style}">
+                        <div><strong>${location.name}</strong> ${label}</div>
+                        <div>ID: <span class="template-id">${location.id}</span></div>
+                        ${location.description ? `<div>Description: ${location.description}</div>` : ''}
+                    </div>`;
+                });
+            } else {
+                html += '<p class="error">No locations available</p>';
+            }
+            
+            html += '</div></div>';
+            return html;
+        }
+        
+        function createSection(title, data, status = 'info') {
+            const html = `<div class="result-section">
+                <div class="result-header" onclick="toggleSection(this)">
+                    <span>${title}</span>
+                    <div>
+                        <span class="status-badge status-${status}">
+                            ${status === 'success' ? 'Success' : status === 'error' ? 'Failed' : 'Info'}
+                        </span>
+                        <span class="expand-icon">▶</span>
+                    </div>
+                </div>
+                <div class="result-content">
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                </div>
+            </div>`;
+            return html;
+        }
+        
+        function getCredentialsStatus(credentials) {
+            if (credentials.has_client_id && credentials.has_client_secret && credentials.status === 'active') {
+                return 'success';
+            }
+            return 'error';
+        }
+        
+        function displayError(error) {
+            const results = document.getElementById('results');
+            results.innerHTML = `
+                <div class="result-section">
+                    <div class="result-header">
+                        <span>❌ Diagnostic Failed</span>
+                        <span class="status-badge status-error">Error</span>
+                    </div>
+                    <div class="result-content expanded">
+                        <div class="issue">
+                            <strong>Error:</strong> ${error}
+                        </div>
+                        <div class="recommendation">
+                            <strong>Next Steps:</strong>
+                            <ul>
+                                <li>Verify the Instance ID is correct</li>
+                                <li>Check that the instance exists in your database</li>
+                                <li>Ensure the instance status is 'active'</li>
+                                <li>Verify your credentials are valid</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function toggleSection(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.expand-icon');
+            
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                header.classList.remove('expanded');
+            } else {
+                content.classList.add('expanded');
+                header.classList.add('expanded');
+            }
+        }
+        
+        // Auto-expand analysis section
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                const analysisHeader = document.querySelector('.analysis-section');
+                if (analysisHeader) {
+                    const firstHeader = document.querySelector('.result-header');
+                    if (firstHeader) {
+                        toggleSection(firstHeader);
+                    }
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>
