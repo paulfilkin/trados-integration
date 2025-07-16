@@ -32,9 +32,9 @@ try {
         ],
         'system_health' => [
             'database' => $systemStatus['database'],
-            'hmac_auth' => $systemStatus['hmac_auth'],
-            'proxy' => $systemStatus['proxy'],
-            'overall_status' => ($systemStatus['database'] && $systemStatus['hmac_auth']) ? 'healthy' : 'degraded'
+            'jws_keys' => $systemStatus['jws_keys'],
+            'webhook_endpoint' => $systemStatus['webhook_endpoint'],
+            'overall_status' => ($systemStatus['database'] && $systemStatus['jws_keys']) ? 'healthy' : 'degraded'
         ],
         'database_info' => [
             'version' => $dbInfo['version'] ?? 'unknown',
@@ -43,8 +43,8 @@ try {
         ],
         'integration_info' => [
             'automatic_provisioning' => true,
-            'hmac_authentication' => true,
-            'proxy_routing' => true,
+            'jws_authentication' => true,
+            'webhook_processing' => true,
             'real_time_logging' => true
         ]
     ];

@@ -47,39 +47,6 @@ try {
         exit;
     }
     
-    // Validate HMAC signature
-    $headers = getallheaders();
-    $signature = $headers['X-Signature'] ?? $headers['x-signature'] ?? null;
-    $timestamp = $headers['X-Timestamp'] ?? $headers['x-timestamp'] ?? null;
-    $nonce = $headers['X-Nonce'] ?? $headers['x-nonce'] ?? null;
-    $source = $headers['X-Source'] ?? $headers['x-source'] ?? 'unknown';
-    
-    if (!$signature || !$timestamp || !$nonce) {
-        logActivity('error', 'Missing HMAC headers in webhook', 'Required: X-Signature, X-Timestamp, X-Nonce');
-        http_response_code(401);
-        echo json_encode(['error' => 'Missing authentication headers']);
-        exit;
-    }
-    
-    // Get HMAC secret from your generated API key
-    $hmacSecret = getHmacSecretKey();
-    if (!$hmacSecret) {
-        logActivity('error', 'No API key configured for webhook validation');
-        http_response_code(500);
-        echo json_encode(['error' => 'Server configuration error']);
-        exit;
-    }
-    
-    // Validate the signature
-    if (!validateHmacSignature($rawPayload, $signature, $timestamp, $nonce, $hmacSecret)) {
-        logActivity('error', 'Invalid HMAC signature for webhook', 
-                   "Source: $source, Signature validation failed");
-        http_response_code(401);
-        echo json_encode(['error' => 'Invalid authentication signature']);
-        exit;
-    }
-    
-    logActivity('success', 'Webhook HMAC signature validated successfully');
     
     // Extract event data
     $tenantId = $payload['tenantId'] ?? null;

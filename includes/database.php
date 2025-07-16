@@ -86,7 +86,6 @@ function createDatabaseTables($pdo) {
     
     // Insert default configuration values if they don't exist
     $configs = [
-        ['hmac_secret_key', 'your-super-secret-hmac-key-here', 'HMAC secret key for request validation'],
         ['proxy_enabled', '1', 'Enable/disable proxy functionality'],
         ['log_retention_days', '30', 'Number of days to retain activity logs'],
         ['auto_cleanup_enabled', '1', 'Enable automatic cleanup of old logs'],
