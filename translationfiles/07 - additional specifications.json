@@ -1,0 +1,75 @@
+{
+    "project": {
+        "name": "Green Future Wind Farm",
+        "company": "EcoGlobe Renewables",
+        "version": "1.0",
+        "lastUpdated": "2025-02-20"
+    },
+    
+    "sections": [
+        {
+            "id": 1,
+            "title": "Introduction",
+            "content": "This dataset contains structured information about the Green Future Wind Farm, covering specifications, installation, and maintenance procedures."
+        },
+        {
+            "id": 2,
+            "title": "Specifications",
+            "subsections": [
+                {
+                    "title": "Turbine Specifications",
+                    "details": {
+                        "turbineModel": "GFW-500",
+                        "capacityMW": 5,
+                        "heightMeters": 120,
+                        "bladeLengthMeters": 75
+                    }
+                },
+                {
+                    "title": "Grid Connection",
+                    "details": {
+                        "voltage_kV": 132,
+                        "frequency_Hz": 50,
+                        "connectionType": "HVAC"
+                    }
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "title": "Installation",
+            "subsections": [
+                {
+                    "title": "Foundation Setup",
+                    "steps": [
+                        "Excavate and lay reinforced concrete foundation.",
+                        "Ensure proper curing for at least 28 days.",
+                        "Inspect foundation for structural integrity."
+                    ]
+                },
+                {
+                    "title": "Turbine Assembly",
+                    "steps": [
+                        "Use crane to lift and assemble tower sections.",
+                        "Attach nacelle and secure structural connections.",
+                        "Install blades and perform aerodynamic balance check."
+                    ]
+                }
+            ]
+        },
+        {
+            "id": 4,
+            "title": "Maintenance",
+            "subsections": [
+                {
+                    "title": "Routine Checks",
+                    "checklist": [
+                        "Inspect blades for wear and erosion.",
+                        "Check generator and transformer efficiency.",
+                        "Monitor SCADA system for anomalies."
+                    ]
+                }
+            ]
+        }
+    ]
+}
