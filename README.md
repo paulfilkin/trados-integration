@@ -1,6 +1,6 @@
 # Trados Integration Website
 
-A local development website that enables developers to host API endpoints and webhook receivers for testing and developing Trados Cloud Platform integrations. This project provides the server-side component that communicates with the [Trados Deployment Addon](https://github.com/paulfilkin/trados-deployment-addon) through API calls and webhook events.
+A local development website (built entirely with the help of Claude AI) that enables developers to host API endpoints and webhook receivers for testing and developing Trados Cloud Platform integrations. This project provides the server-side component that communicates with the [Trados Deployment Addon](https://github.com/paulfilkin/trados-deployment-addon) through API calls and webhook events.
 
 ## Overview
 
