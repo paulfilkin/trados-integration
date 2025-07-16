@@ -155,16 +155,39 @@ Use this URL when configuring webhooks in Trados Cloud Platform.
 Once you have XAMPP running and the project installed, you can access these key interfaces for development and testing:
 
 ### Main Dashboard
-- [Main Dashboard](http://localhost/trados-integration/index.php) - View all integration instances and their status, monitor system health and recent activity, access instance details and webhook configurations with real-time auto-refresh functionality
+http://localhost/trados-integration/index.php
+- View all integration instances and their status
+- Monitor system health and recent activity
+- Access instance details and webhook configurations
+- Real-time dashboard with auto-refresh functionality
 
 ### Translation Files Manager
-- [Translation Files Manager](http://localhost/trados-integration/translation-files-manager.html) - Upload and process translation files, create Trados projects using templates, monitor file processing progress, and view webhook events in real-time as you work with projects
+http://localhost/trados-integration/translation-files-manager.html
+- Upload and process translation files
+- Create Trados projects using templates
+- Monitor file processing progress
+- View webhook events in real-time as you work with projects
 
 ### Debug Logs Viewer
-- [Debug Logs Viewer](http://localhost/trados-integration/check_logs.php) - View recent activity logs for debugging, monitor webhook reception and processing, check JWS signature validation status, and troubleshoot integration issues
+http://localhost/trados-integration/check_logs.php
+- View recent activity logs for debugging
+- Monitor webhook reception and processing
+- Check JWS signature validation status
+- Troubleshoot integration issues
 
-### Database Viewer
-- [Database Viewer](http://localhost/trados-integration/database-viewer.php) - Inspect all database tables and contents, view stored webhook events and activity logs, monitor integration instance data, and perform advanced debugging and data inspection
+### Database Viewer (Additional)
+http://localhost/trados-integration/database-viewer.php
+- Inspect all database tables and contents
+- View stored webhook events and activity logs
+- Monitor integration instance data
+- Advanced debugging and data inspection
+
+### Quick Start Development Workflow
+1. Start XAMPP and ensure Apache is running
+2. Start ngrok: `ngrok http 80`
+3. Access the main dashboard to verify everything is working
+4. Use the translation files manager to test file processing
+5. Monitor logs and webhook events during development
 
 ### Quick Start Development Workflow
 1. Start XAMPP and ensure Apache is running
